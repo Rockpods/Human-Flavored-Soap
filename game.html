@@ -3,23 +3,58 @@
 <head>
 <title>My Drive - Google Drive</title>
 <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
-<link rel="stylesheet" href="game.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="w3.css">
+<style>
+body, html {height: 100%}
+body,h1,h2,h3,h4,h5,h6 {font-family: "courier", sans-serif; color:white}
+.menu {display: none}
+.bgimg {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("images/bg.jpg");
+  min-height: 90%;
+}
+  #frame {
+    border: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    z-index: 10;
+    background-color: #fff;
+    user-select: none;
+}
+</style>
 </head>
 <body>
+<div class="w3-bar w3-black">
+  <a href="/index.html" class="w3-bar-item w3-button w3-mobile">Home</a>
+  <a href="/get.html" class="w3-bar-item w3-button w3-mobile">Surf Freely</a>
+  <a href="/game.html" class="w3-bar-item w3-button w3-mobile">Ga<wbr>m<wbr>es</a>
+  <a href="/chatbox.html" class="w3-bar-item w3-button w3-mobile">Ch<wbr>atb<wbr>ox</a>
+  <a href="/credit.html" class="w3-bar-item w3-button w3-mobile">Credit</a>
+</div>
+<center>
     <h2>Menu</h2>
     <input type="text" id="mySearch" onkeyup="myFunction()" placeholder="Search.." title="Type in a category">
     <ul id="myMenu">
-      <li><a href="/games/2048/index.html">2048</a></li>
-      <li><a href="/games/cookies/index.html">Cookie Clicker</a></li>
-      <li><a href="/games/flappybird/index.html">Flappy Bird</a></li>
-      <li><a href="/games/hextris/index.html">Hextris</a></li>
-      <li><a href="/games/pacman/index.html">Pacman</a></li>
-      <li><a href="/games/spaceinvaders/index.html">Space Invader</a></li>
-	  <li><a href="/games/towermaster/index.html">Tower Master</a></li>
-      <li><a href="/games/nes/index.html">NES Emulator</a></li>
-	  <li><a href="/games/snes/index.html">SNES Emulator</a></li>
-	  <li><a href="/games/gba/index.html">GBA Emulator</a></li>
+      <a href="/games/2048/index.html">2048</a><br>
+      <a href="/games/cookies/index.html">Cookie Clicker</a><br>
+      <a href="/games/flappybird/index.html">Flappy Bird</a><br>
+      <a href="/games/hextris/index.html">Hextris</a><br>
+      <a href="/games/pacman/index.html">Pacman</a><br>
+      <a href="/games/spaceinvaders/index.html">Space Invader</a><br>
+	  <a href="/games/towermaster/index.html">Tower Master</a><br>
+	  <a href="/games/1v1.html">1v1.lol</a><br>
+      <a href="/games/nes/index.html">NES Emulator</a><br>
+	  <a href="/games/snes/index.html">SNES Emulator</a><br>
+	  <a href="/games/gba/index.html">GBA Emulator</a><br>
     </ul>
+	</center>
 	<script>
 function myFunction() {
   var input, filter, ul, li, a, i;
@@ -35,6 +70,14 @@ function myFunction() {
       li[i].style.display = "none";
     }
   }
+}
+</script>
+<script>
+body {
+  background-image: url('/bg.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100%;
 }
 </script>
 </body>

@@ -71,7 +71,7 @@ $('sneakynode').onclick = function() {
     var url = $('url').value;
     var det = document.domain;
     var domain = det.replace('www.', '').split(/[/?#]/)[0];
-    frame.src = "https://a." + "homework-helper.ml" + "/proxy/" + url;
+    frame.src = "https://node." + "hopelessjourney.ga" + "/children/" + url;
     frame.style['visibility'] = "visible";
     document.cookie = 'nu_auth=yes; expires=' + (Date.now() + 259200) + '; SameSite=None; domain=.' + auth + '; path=/; Secure;';
     return false;
@@ -81,7 +81,7 @@ $('classicnode').onclick = function() {
     var url = $('url').value;
     var det = document.domain;
     var domain = det.replace('www.', '').split(/[/?#]/)[0];
-    window.location.href = "https://a." + "homework-helper.ml" + "/proxy/" + url;
+    window.location.href = "https://" + "node." + "hopelessjourney.ga" + "/children/" + url;
     document.cookie = 'nu_auth=yes; expires=' + (Date.now() + 259200) + '; SameSite=None; domain=.' + auth + '; path=/; Secure;';
     return false;
 };
