@@ -1,0 +1,170 @@
+pc.script.create('game', function (app) {
+    // Creates a new Game instance
+    var Game = function (entity) {
+        this.entity = entity;       
+        
+        this.states = {
+            MENU: 0,
+            PLAYING: 1,
+            END: 2
+        };
+        
+        this.menu = false;
+        this.betAmount = 0;
+        this.funds = 10000;
+    };
+    
+
+    Game.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {   
+            this.createCSS();
+            app.keyboard.on(pc.EVENT_KEYUP, this.onKeyUp, this);
+            this.setState(this.states.MENU);
+        },
+        
+        createCSS: function(){
+            //CSS
+            var cssElement = document.createElement('style');
+            var css = ".slidingMenu {position: absolute;height:410px;width: 410px;top:40px;overflow:hidden;right:1px;font-family: Arial, Helvetica, sans-serif;}";
+            css += ".slidingMenu li {display:block;float:right;clear:both;position:relative;overflow:hidden;}";
+            css += ".slidingMenu li.move {width: 9px;height: 68px;right:0px;padding-right:10px;margin-top:2px;z-index: 8;position: absolute;background: #2183c4;background:-webkit-gradient(linear,left top,left bottom,from(#0771b8),to(#2183c4));background:-moz-linear-gradient(top,#0771b8,#2183c4);-moz-border-radius: 8px 0px 0px 8px;-webkit-border-top-left-radius: 8px;-webkit-border-bottom-left-radius: 8px;border-top-left-radius: 8px;border-bottom-left-radius: 8px;-moz-box-shadow:1px 1px 5px #000;-webkit-box-shadow:1px 1px 5px #000;box-shadow:1px 1px 5px #000;}";
+            css += ".slidingMenu li a {font-size:66px;text-transform:uppercase;text-decoration: none;color: #ddd;outline: none;text-indent:5px;z-index: 10;display: block;float: right;height: 66px;line-height: 66px;position: relative;overflow: hidden;padding-right:10px;}";
+            css += ".slidingMenuDesc{/*margin-top:40px;*/top:50px;position:relative;}";
+            css += ".slidingMenuDesc div{background: #2183c4;background:-webkit-gradient(linear,left top,left bottom,from(#0771b8),to(#2183c4));background:-moz-linear-gradient(top,#0771b8,#2183c4);height: 68px;padding-right:5px;left:-5px;width:0px;margin-top:2px;overflow:hidden;position:absolute;-moz-box-shadow:1px 1px 5px #000;-webkit-box-shadow:1px 1px 5px #000;box-shadow:1px 1px 5px #000;-moz-border-radius: 0px 8px 8px 0px;-webkit-border-top-right-radius: 8px;-webkit-border-bottom-right-radius: 8px;border-top-right-radius: 8px;border-bottom-right-radius: 8px;}";
+            css += ".slidingMenuDesc div span {font-size:36px;color: #f0f0f0;text-indent:5px;z-index: 10;display: block;height: 66px;line-height: 66px;position:absolute;right:10px;margin-left:5px;top:-3px;}";
+            cssElement.innerHTML = css;
+            $("head").append(cssElement);  
+        },
+
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+        },
+        
+        onKeyUp: function(event){
+            if (event.key === pc.KEY_ESCAPE) {
+                this.showMenu();
+            }
+        },
+        
+        setState: function(state){
+            if(this.state)
+                this.exitState(this.state);
+            
+            this.enterState(state);
+        },
+        
+        enterState: function(state){
+            this.state = state;
+            
+            switch(state){
+                case this.states.MENU:
+                    this.showMenu();
+                    break;
+                case this.states.PLAYING:
+                    break;
+                case this.states.END:
+                    break;
+            }
+        },
+        
+        exitState: function(state){
+            
+        },
+        
+        play: function(event){
+            
+         /*   switch(event.data.decks){
+                case 1:*/
+                    app.root.findByName("Main").script.ui.drawTwistAndStickButtons();
+                    app.root.findByName("Main").script.ui.drawChipOverlay();
+                    app.root.findByName("Main").script.ui.drawBettingArea();
+                    app.root.findByName("Main").script.ui.displayFunds();
+                    app.root.findByName("Decoration").enabled = true;
+               /*     break;
+                case 2: 
+                    
+                    break;
+                case 4:
+                    
+                    break;
+            }*/
+            
+            
+            app.root.findByName("Main").script.game.hideMenu();
+        },
+        
+        getFunds: function(){
+            return this.funds;
+        },
+        
+        showMenu: function(){
+            
+            if(!this.menu){
+                //HTML
+                var html = '<div id="slidingMenuDesc" class="slidingMenuDesc">';
+
+                //Slide-in info
+                html += '<div><span>Play BlackJack with hands dealt from one deck</span></div>';
+                html += '<div><span>Play BlackJack with hands dealt from two mixed decks</span></div>';
+                html += '<div><span>Play BlackJack with hands dealt from four mixed decks</span></div>';
+                html += '</div><ul id="slidingMenu" class="slidingMenu">';
+
+                //Menu items
+                html += '<li style="padding-bottom:30px;"><a href="#">BlackJack</a></li>';
+                html += '<li id="playOne"><a href="#">Play One</a></li>';
+                html += '<li id="playTwo"><a href="#">Play Two</a></li>';
+                html += '<li id="playFour"><a href="#">Play Four</a></li>';
+                html += '</ul>';
+                $("body").append(html);
+                
+                
+                app.root.findByName("Main").script.menu.enableMenu();
+            }
+            this.menu = true;
+        },
+        
+        hideMenu: function(){
+            if(this.menu){
+                $('#slidingMenu').remove();
+                $('#slidingMenuDesc').remove();
+            }
+            this.menu = false;
+        },
+        
+        updateBetting: function(){
+            app.root.findByName("Main").script.ui.drawBettingArea(this.betAmount);
+            app.root.findByName("Main").script.ui.displayFunds(this.funds);
+        },
+        
+        payout: function(win, push, blackjack){
+            if(win){
+                if(push){
+                    this.funds += this.betAmount;
+                }
+                else {
+                    if(blackjack){
+                        this.funds += (this.betAmount * 2.5);
+                    }
+                    else {
+                        this.funds += (this.betAmount * 2);
+                    }
+                }
+            }
+            
+            this.betAmount = 0;
+            this.updateBetting();
+        },
+        
+        placeChip: function(num){
+            if(!app.root.findByName("Main").script.cardmanager.inGame){
+                this.betAmount += num;
+                this.funds -= num;
+                this.updateBetting();
+            }
+        }
+        
+    };
+
+    return Game;
+});

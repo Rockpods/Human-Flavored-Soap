@@ -1,0 +1,324 @@
+pc.script.create('finishLevel', function (app) {
+    // Creates a new FinishLevel instance
+    var FinishLevel = function (entity) {
+        this.entity = entity;
+    };
+
+    var theend = false;
+    var changeme = false;
+
+    FinishLevel.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            //Level1
+            if(this.entity == app.context.root.findByName('finish-b3')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(2);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //level2
+            if(this.entity == app.context.root.findByName('finish-f3')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(3);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level3
+            if(this.entity == app.context.root.findByName('finish-e4')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(4);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                    app.context.root.findByName('resetMe1').enabled = false;
+                },this);
+            }
+            //Level4
+            if(this.entity == app.context.root.findByName('finish-g3')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(5);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level5
+            if(this.entity == app.context.root.findByName('finish-h3')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(6);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                    app.context.root.findByName('resetMe2').enabled = false;
+                    app.context.root.findByName('resetMe3').enabled = false
+                    ;
+                },this);
+            }
+            //Level6
+            if(this.entity == app.context.root.findByName('finish-i1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(7);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level7
+            if(this.entity == app.context.root.findByName('finish-j2')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(8);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                    app.context.root.findByName('resetMe4').enabled = false;
+                },this);
+            }
+            //Level8
+            if(this.entity == app.context.root.findByName('finish-k1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(9);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level9
+            if(this.entity == app.context.root.findByName('finish-l1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(10);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level10
+            if(this.entity == app.context.root.findByName('finish-m1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(11);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level11
+            if(this.entity == app.context.root.findByName('finish2-a1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(12);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level12
+            if(this.entity == app.context.root.findByName('finish2-b1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(13);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level13
+            if(this.entity == app.context.root.findByName('finish2-c1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(14);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level14
+            if(this.entity == app.context.root.findByName('finish2-d1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(15);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level15
+            if(this.entity == app.context.root.findByName('finish2-e1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(16);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level16
+            if(this.entity == app.context.root.findByName('finish2-f1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(17);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level17
+            if(this.entity == app.context.root.findByName('finish2-g1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(18);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level18
+            if(this.entity == app.context.root.findByName('finish2-h1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(19);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level19
+            if(this.entity == app.context.root.findByName('finish2-i1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(20);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level21
+            if(this.entity == app.context.root.findByName('finish3-a1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(22);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level22
+            if(this.entity == app.context.root.findByName('finish3-b1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(23);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level23
+            if(this.entity == app.context.root.findByName('finish3-c1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(24);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level24
+            if(this.entity == app.context.root.findByName('finish3-d1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(25);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level25
+            if(this.entity == app.context.root.findByName('finish3-e1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(26);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level26
+            if(this.entity == app.context.root.findByName('finish3-f1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(27);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level27
+            if(this.entity == app.context.root.findByName('finish3-g1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(28);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level28
+            if(this.entity == app.context.root.findByName('finish3-h1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(29);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level29
+            if(this.entity == app.context.root.findByName('finish3-i1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(30);
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level30
+            if(this.entity == app.context.root.findByName('finish3-j1')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(31);
+                    document.getElementById('home1Btn').click();
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                },this);
+            }
+            //Level32
+            if(this.entity == app.context.root.findByName('finish4-a1')){
+                this.entity.collision.on('triggerenter',function(){
+                    theend = true;
+                    app.context.root.findByName('soundeffects').audiosource.play('Effect');
+                    app.context.root.findByName('ball').rigidbody.enabled = false;
+                    this.makeButton(namel, 'thanksBtn', 'Home', '40%', '10%', '85%', '20%', 16);
+                    this.makeScreen(namel,'thanks','Thank you for saving this land young hero. The land has reunited and the peaceful kingdom has been restored. We have made a time travel device in you honor, so you may return to your adventures at any time. I bestow upon you the throne, so that you may hold it better than I.','');
+                    document.getElementById('thanks').appendChild(document.getElementById('thanksBtn'));
+                },this);
+            }
+        },
+        makeButton: function(namel, idl, name, position, height, top, width, number){
+            namel = document.createElement('button');
+            namel.style.position = 'absolute';
+            namel.style.width = width;
+            namel.style.height = height;
+            namel.style.top = top;
+            namel.style.left = position;
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.addEventListener("mouseover", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOver(number);
+            });
+            this.namel.addEventListener("mouseout", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOut(number);
+            });
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        
+        makeScreen: function(namel, idl, name, position){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = '50%';
+            namel.style.height = '75%';
+            namel.style.top = '5%';
+            namel.style.left = '25%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.opacity = '0.8';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            if(theend === true){
+                document.getElementById('thanksBtn').onclick = function(){
+                    app.context.root.findByName('ball').rigidbody.enabled = true;
+                    document.body.removeChild(document.getElementById('thanks'));
+                    document.getElementById('home1Btn').click();
+                    theend = false;
+                };
+            }
+        }
+    };
+
+    return FinishLevel;
+});

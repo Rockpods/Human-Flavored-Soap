@@ -1,0 +1,122 @@
+pc.script.create('king', function (app) {
+    // Creates a new King instance
+    var King = function (entity) {
+        this.entity = entity;
+    };
+    var number = 7;
+    King.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            number = 7;
+            this.entity.findByName('minions').setLocalPosition(0,0.8,0);
+            this.entity.findByName('minions').rigidbody.syncEntityToBody();
+            this.makeTitle();
+            app.context.root.findByName('defaultCamera').script.Menu.started();
+        },
+        
+        makeButton: function(namel, idl, name, position, height, top, width, number){
+            namel = document.createElement('button');
+            namel.style.position = 'absolute';
+            namel.style.width = width;
+            namel.style.height = height;
+            namel.style.top = top;
+            namel.style.left = position;
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.addEventListener("mouseover", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOver(number);
+            });
+            this.namel.addEventListener("mouseout", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOut(number);
+            });
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        
+        makeScreen: function(namel, idl, name, position){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = '50%';
+            namel.style.height = '75%';
+            namel.style.top = '5%';
+            namel.style.left = '25%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.opacity = '0.8';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        
+        makeTitle: function(){
+            var namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.top = '-650%';
+            namel.style.width = '40%';
+            namel.style.left = '30%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.borderRadius = '5px';
+            namel.style.fontSize = '36px';
+            namel.style.border = '5px ridge #202020';
+            namel.style.backgroundColor = '#000033';
+            namel.id = 'minion';
+            this.namel = namel;
+            this.namel.innerHTML = 'Minions:' + number;
+            document.getElementById('scores1').appendChild(this.namel);
+        },
+        
+        start: function(){
+            this.entity.findByName('minions').enabled = false;
+            this.makeScreen(namel,'bossdone','Defeated <br><br> The king stood by as seven of his minions fell. Weakened by his enemy he saw the world clearly for the first time in many years. Seeing what he had done to the land and the people that had once respected him, he restored the land with the last of his power. He calls the kingdom together once again for a special event.');
+            this.makeButton(namel, 'doneBtn', 'Home', '40%', '10%', '85%', '20%', 15);
+            document.getElementById('bossdone').appendChild(document.getElementById('doneBtn'));
+            number = -1;
+        },
+        
+        resetMinions: function(){
+            number = 7;
+        },
+
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            this.pos = this.entity.findByName('minions').getLocalPosition();
+            if(number >= 1){
+                document.getElementById('minion').innerHTML = 'Minions:' + number;
+            }
+            if(this.pos.y <= 0){
+                this.entity.findByName('minions').setLocalPosition(0,0.8,0);
+                this.entity.findByName('minions').rigidbody.syncEntityToBody();
+                number -= 1;
+            }
+            if(number === 0){
+                document.getElementById('scores1').removeChild(document.getElementById('minion'));
+                this.start();
+            }
+            if(number == -1){
+                document.getElementById('doneBtn').onclick = function(){
+                    number = 3;
+                    app.context.root.findByName('minions').enabled = true;
+                    document.body.removeChild(document.getElementById('bossdone'));
+                    document.getElementById('home1Btn').click();
+                    app.context.root.findByName('defaultCamera').script.Menu.levelUp(32);
+                };
+            }
+        }
+    };
+
+    return King;
+});

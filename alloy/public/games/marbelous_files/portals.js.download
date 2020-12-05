@@ -1,0 +1,66 @@
+pc.script.attribute('speed', 'number', 2, {
+    min: 0.05,
+    max: 10,
+    step: 0.05,
+    decimalPrecision: 2
+});
+pc.script.create('portals', function (app) {
+    // Creates a new Portals instance
+    var Portals = function (entity) {
+        this.entity = entity;
+    };
+
+    Portals.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            this.shrink = 0.5;
+            this.xPos = -3;
+            this.zPos = 0;
+            this.material = this.entity.findByName('material');
+            this.portal1 = this.entity.findByName('Portal1');
+            this.portal2 = this.entity.findByName('Portal2');
+            this.portal1.collision.on('collisionstart', this.start, this);
+        },
+
+        start: function(){
+            this.scale = true;
+        },
+
+        teleport: function(){
+            this.xPos = this.portal2Pos.x;
+            this.zPos = this.portal2Pos.z;
+            app.context.root.findByName('soundeffects2').audiosource.play('portal');
+            this.material.setLocalPosition(this.xPos,0,this.zPos);
+            this.material.rigidbody.syncEntityToBody();
+        },
+
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            if(this.scale === true){
+                this.shrink -= 0.1;
+                if(this.shrink <= 0){
+                    this.teleport();
+                    this.scale = false;
+                }
+            }
+            this.shrink += 0.05;
+            if(this.shrink >= 0.5){
+                this.shrink = 0.5;
+            }
+            this.portal1Pos = this.portal1.getLocalPosition();
+            this.portal2Pos = this.portal2.getLocalPosition();
+            this.opp = this.portal1Pos.x - this.portal2Pos.x;
+            this.adj = this.portal1Pos.z - this.portal2Pos.z;
+            this.hyp = Math.sqrt((this.opp * this.opp) + (this.adj * this.adj));
+            this.xSpeed = (this.opp / this.hyp) * this.speed;
+            this.zSpeed = (this.adj / this.hyp) * this.speed;
+            this.xPos += this.xSpeed;
+            this.zPos += this.zSpeed;
+            this.material.setLocalPosition(this.xPos,0,this.zPos);
+            this.material.rigidbody.syncEntityToBody();
+            this.material.setLocalScale(this.shrink,this.shrink,this.shrink);
+        }
+    };
+
+    return Portals;
+});

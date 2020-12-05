@@ -1,0 +1,57 @@
+pc.script.create('turnOnBounce', function (app) {
+    // Creates a new TurnOnBounce instance
+    var TurnOnBounce = function (entity) {
+        this.entity = entity;
+    };
+
+    TurnOnBounce.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            this.entity.collision.on('triggerenter',this.changePos,this);
+            this.ball = app.context.root.findByName('ball');
+        },
+        changePos: function(number){
+            app.context.root.findByName('soundeffects').audiosource.play('Effect');
+            if(this.entity == app.context.root.findByName('teleport-e3')){
+                this.updatePos(1);
+            }
+            if(this.entity == app.context.root.findByName('teleport-h1')){
+                this.updatePos(2);
+            }
+            if(this.entity == app.context.root.findByName('teleport-h2')){
+                this.updatePos(3);
+            }
+            if(this.entity == app.context.root.findByName('teleport-j1')){
+                this.updatePos(4);
+            }
+        },
+        updatePos: function(number){
+            this.change = number;
+        },
+        
+        turnOffChanges: function(){
+            
+        },
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            if(this.change == 1){
+                app.context.root.findByName('resetMe1').enabled = true;
+                this.change = 0;
+            }
+            if(this.change == 2){
+                app.context.root.findByName('resetMe2').enabled = true;
+                this.change = 0;
+            } 
+            if(this.change == 3){
+                app.context.root.findByName('resetMe3').enabled = true;
+                this.change = 0;
+            } 
+            if(this.change == 4){
+                app.context.root.findByName('resetMe4').enabled = true;
+                this.change = 0;
+            } 
+        }
+    };
+
+    return TurnOnBounce;
+});

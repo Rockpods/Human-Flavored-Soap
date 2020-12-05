@@ -1,0 +1,1148 @@
+pc.script.attribute("letters", "asset", [], {type: "texture"});
+
+pc.script.create('Menu', function (app) {
+    // Creates a new MenuScreen instance
+    var Menu = function (entity) {
+        this.entity = entity;
+    };
+    var play = play;
+    var coins = 60;
+    var textWindow = textWindow;
+    var info = info;
+    var store = store;
+    var menu = menu;
+    var back = back;
+    var menuText = menuText;
+    var menuBtn = menuBtn;
+    var game =  false;
+    var isTouching = true;
+    var height = height;
+    var playWindow = playWindow;
+    var buttonPress = 0;
+    var makeUI = 0;
+    var stageLoad = 0;
+    var bossFight = false;
+    var scores = scores;
+    var menubtn = menubtn;
+    var score = 0;
+    var lives = 3;
+    var highscore = 0;
+    var makeChange = false;
+    var resetBtn = resetBtn;
+    var homeBtn = homeBtn;
+    var tutorial = false;
+    var sound = true;
+    var music = true;
+    var level = 1;
+    var chapter = 1;
+    var effects = true;
+    var init = false;
+    Menu.prototype = {
+        // Called once after all resources are loaded and before the first update
+        // Initializes the menu screen buildup and loads your personal stats.
+        initialize: function () {
+            this.tutorialOn = false;
+            this.timeLeft = 5;
+            if(localStorage.levels === undefined){
+                localStorage.levels = 1;
+            }
+            if(isNaN(localStorage.levels) === true){
+                localStorage.levels = 1;
+            }
+            if(localStorage.highscore === undefined){
+                localStorage.highscore = 0;
+            }
+            if(music === true){
+                this.makeMusic(play,'music','Now Playing: News Theme <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/');
+            }
+            localStorage.levels = Number(localStorage.levels);
+            document.getElementById('music').innerHTML = 'Now Playing: News Theme <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+            this.makeButton(play, 'storeBtn', 'Play', '10%', '80%', '10%','20%',1);
+            this.makeButton(info, 'infoBtn', 'Tutorial', '40%', '80%', '10%','20%',2);
+            this.makeButton(store, 'playBtn', 'Boss', '70%', '80%', '10%','20%',3);
+            this.makeTitle();
+            this.makeBuffer(menu, 'menuBuffer', '', '');
+            makeUI = true;
+            this.make1Change = false;
+        },
+        
+        //Defines how to create a button.
+        makeButton: function(namel, idl, name, position, height, top,width,number){
+            namel = document.createElement('button');
+            namel.style.position = 'absolute';
+            namel.style.width = width;
+            namel.style.height = height;
+            namel.style.top = top;
+            namel.style.left = position;
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.addEventListener("mouseover", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOver(number);
+            });
+            this.namel.addEventListener("mouseout", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOut(number);
+            });
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        
+        //Defines how to create a textbox.
+        makeTextBox: function(namel, idl, name, position, height, top, width){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = width;
+            namel.style.height = height;
+            namel.style.top = top;
+            namel.style.left = position;
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.borderRadius = '5px';
+            namel.style.border = '0px solid';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+        },
+        
+        //Defines how to create a textbox.
+        makeTitle: function(){
+            var namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.top = '-650%';
+            namel.style.width = '70%';
+            namel.style.left = '15%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'black';
+            namel.style.fontFamily = "Arial Black";
+            namel.id = 'title';
+            this.namel = namel;
+            this.namel.innerHTML = '<font size="100">M</font><font size="90">A</font><font size="80">R</font><font size="70">B</font><font size="60">L</font><font size="70">E</font><font size="80">O</font><font size="90">U</font><font size="100">S</font>';
+            document.body.appendChild(namel);
+        },
+        
+        makeMusic: function(namel, idl, name){
+            namel = document.createElement('button');
+            namel.style.position = 'absolute';
+            namel.style.width = '19%';
+            namel.style.height = '22%';
+            namel.style.top = '-5px';
+            namel.style.left = '-5px';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.borderRadius = '5px';
+            namel.style.border = '5px ridge #202020';
+            namel.style.backgroundColor = '#000033';
+            namel.style.fontSize = '12px';
+            namel.style.zIndex = '6';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+        },
+        //Defines how to create a screen.
+        makeScreen: function(namel, idl, name, position){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = '50%';
+            namel.style.height = '75%';
+            namel.style.top = '5%';
+            namel.style.left = '25%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.opacity = '0.8';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        
+        //Defines how to create a buffer.
+        makeBuffer: function(namel, idl, name, position){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = '50%';
+            namel.style.height = '12%';
+            namel.style.top = '83%';
+            namel.style.left = '25%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.backgroundColor = '#000033';
+            namel.style.opacity = '0.8';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        
+        //Defines how to create an image.
+        makeThing: function(namel, idl, name, position, height, top,number){
+            namel = document.createElement('button');
+            namel.style.position = 'absolute';
+            namel.style.width = '50px';
+            namel.style.height = height;
+            namel.style.top = top;
+            namel.style.left = position;
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.backgroundColor = '#000033';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.addEventListener("mouseover", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOver(number);
+            });
+            this.namel.addEventListener("mouseout", function(){
+                app.context.root.findByName('defaultCamera').script.Menu.mouseOut(number);
+            });
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        
+        makeLevel: function(){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = '10%';
+            namel.style.height = '10%';
+            namel.style.top = '31%';
+            namel.style.left = '5%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.id = 'levelDone';
+            this.namel.innerHTML = chapter + '.' + level;
+            document.body.appendChild(namel);
+            
+        },
+        
+        //Increases your progress.
+        levelUp: function(number){
+            lives = 3;
+            level = number;
+            if(level > localStorage.levels){
+                localStorage.levels = level;
+            }
+        },
+        
+        //Used to build up the ui for the game at different stages.
+        updatePage: function(number){
+            if(number == 1){
+                document.getElementById('menuBuffer').appendChild(document.getElementById('playBtn'));
+                document.getElementById('menuBuffer').appendChild(document.getElementById('infoBtn'));
+                document.getElementById('menuBuffer').appendChild(document.getElementById('storeBtn'));
+                document.getElementById('menuBuffer').appendChild(document.getElementById('title'));
+                document.body.appendChild(document.getElementById('menuBuffer'));
+            }
+            if(number == 2){
+                document.getElementById('scores').appendChild(document.getElementById('homeBtn'));
+                document.getElementById('scores').appendChild(document.getElementById('resetBtn'));
+                document.getElementById('scores').appendChild(document.getElementById('makeText'));
+                document.body.appendChild(document.getElementById('scores'));
+                document.body.removeChild(document.getElementById('menuBuffer'));
+            }
+            if(number == 3){
+                document.getElementById('image').src = 'https://playcanvas.com/api/assets/1590970/thumbnail/large.jpg';
+                document.getElementById('playWindowThing').appendChild(document.getElementById('image'));
+                document.body.appendChild(document.getElementById('playWindowThing'));
+            }
+            if(number == 4){
+                document.getElementById('scores1').appendChild(document.getElementById('home1Btn'));
+                document.getElementById('scores1').appendChild(document.getElementById('reset1Btn'));
+                document.getElementById('scores1').appendChild(document.getElementById('make1Text'));
+                document.body.appendChild(document.getElementById('scores1'));
+            }
+            if(number == 5){
+                document.getElementById('playWindow').appendChild(document.getElementById('plusBtn'));
+                document.getElementById('playWindow').appendChild(document.getElementById('minusBtn'));
+                document.getElementById('playWindow').appendChild(document.getElementById('bigplusBtn'));
+                document.getElementById('playWindow').appendChild(document.getElementById('bigminusBtn'));
+                document.getElementById('playWindow').appendChild(document.getElementById('storyBtn'));
+                document.getElementById('playWindow').appendChild(document.getElementById('levelText'));
+                document.getElementById('playWindow').appendChild(document.getElementById('levelDone'));
+                document.body.appendChild(document.getElementById('playWindow'));
+            }
+        },
+        
+        mouseOver: function(number){
+            if(number == 1){
+                document.getElementById('storeBtn').style.backgroundColor = 'white';
+                document.getElementById('storeBtn').style.color = '#000033';
+            }
+            if(this.tutorialOn === false){
+                if(number == 2){
+                    document.getElementById('infoBtn').style.backgroundColor = 'white';
+                    document.getElementById('infoBtn').style.color = '#000033';
+                }
+            }
+            if(bossFight === false){
+                if(number == 3){
+                    document.getElementById('playBtn').style.backgroundColor = 'white';
+                    document.getElementById('playBtn').style.color = '#000033';
+                }
+            }
+            if(number == 4){
+                document.getElementById('bigminusBtn').style.backgroundColor = 'white';
+                document.getElementById('bigminusBtn').style.color = '#000033';
+            }
+            if(number == 5){
+                document.getElementById('minusBtn').style.backgroundColor = 'white';
+                document.getElementById('minusBtn').style.color = '#000033';
+            }
+            if(number == 6){
+                document.getElementById('plusBtn').style.backgroundColor = 'white';
+                document.getElementById('plusBtn').style.color = '#000033';
+            }
+            if(number == 7){
+                document.getElementById('bigplusBtn').style.backgroundColor = 'white';
+                document.getElementById('bigplusBtn').style.color = '#000033';
+            }
+            if(game === false){
+                if(number == 8){
+                    document.getElementById('storyBtn').style.backgroundColor = 'white';
+                    document.getElementById('storyBtn').style.color = '#000033';
+                }
+            }
+            if(number == 9){
+                document.getElementById('reset1Btn').style.backgroundColor = 'white';
+                document.getElementById('reset1Btn').style.color = '#000033';
+            }
+            if(game === true){
+                if(number == 10){
+                    document.getElementById('home1Btn').style.backgroundColor = 'white';
+                    document.getElementById('home1Btn').style.color = '#000033';
+                }
+            }
+            if(number == 11){
+                document.getElementById('resetBtn').style.backgroundColor = 'white';
+                document.getElementById('resetBtn').style.color = '#000033';
+            }
+            if(bossFight === true){
+                if(number == 12){
+                    document.getElementById('homeBtn').style.backgroundColor = 'white';
+                    document.getElementById('homeBtn').style.color = '#000033';
+                }
+            }
+            if(number == 15){
+                if(app.context.root.findByName('Level31').enabled === true){
+                    document.getElementById('doneBtn').style.backgroundColor = 'white';
+                    document.getElementById('doneBtn').style.color = '#000033';
+                }
+            }
+            if(number == 16){
+                if(app.context.root.findByName('Level32').enabled === true){
+                    document.getElementById('thanksBtn').style.backgroundColor = 'white';
+                    document.getElementById('thanksBtn').style.color = '#000033';
+                }
+            }
+            if(number == 17){
+                document.getElementById('opt').style.backgroundColor = 'white';
+                document.getElementById('opt').style.color = '#000033';
+            }
+            if(number == 18){
+                document.getElementById('soundRBtn').style.backgroundColor = 'white';
+                document.getElementById('soundRBtn').style.color = '#000033';
+            }
+            if(number == 19){
+                document.getElementById('musicRBtn').style.backgroundColor = 'white';
+                document.getElementById('musicRBtn').style.color = '#000033';
+            }
+            if(number == 20){
+                document.getElementById('difficultyRBtn').style.backgroundColor = 'white';
+                document.getElementById('difficultyRBtn').style.color = '#000033';
+            }
+              
+        },
+        
+        mouseOut: function(number){
+            if(number == 1){
+                document.getElementById('storeBtn').style.backgroundColor = '#000033';
+                document.getElementById('storeBtn').style.color = 'white';
+            }
+            if(this.tutorialOn === false){
+                if(number == 2){
+                    document.getElementById('infoBtn').style.backgroundColor = '#000033';
+                    document.getElementById('infoBtn').style.color = 'white';
+                }
+            }
+            if(bossFight === false){
+                if(number == 3){
+                    document.getElementById('playBtn').style.backgroundColor = '#000033';
+                    document.getElementById('playBtn').style.color = 'white';
+                }
+            }
+            if(number == 4){
+                document.getElementById('bigminusBtn').style.backgroundColor = '#000033';
+                document.getElementById('bigminusBtn').style.color = 'white';
+            }
+            if(number == 5){
+                document.getElementById('minusBtn').style.backgroundColor = '#000033';
+                document.getElementById('minusBtn').style.color = 'white';
+            }
+            if(number == 6){
+                document.getElementById('plusBtn').style.backgroundColor = '#000033';
+                document.getElementById('plusBtn').style.color = 'white';
+            }
+            if(number == 7){
+                document.getElementById('bigplusBtn').style.backgroundColor = '#000033';
+                document.getElementById('bigplusBtn').style.color = 'white';
+            }
+            if(game === false){
+                if(number == 8){
+                    document.getElementById('storyBtn').style.backgroundColor = '#000033';
+                    document.getElementById('storyBtn').style.color = 'white';
+                }
+            }
+            if(number == 9){
+                document.getElementById('reset1Btn').style.backgroundColor = '#000033';
+                document.getElementById('reset1Btn').style.color = 'white';
+            }
+            if(game === true){
+                if(number == 10){
+                    document.getElementById('home1Btn').style.backgroundColor = '#000033';
+                    document.getElementById('home1Btn').style.color = 'white';
+                }
+            }
+            if(number == 11){
+                document.getElementById('resetBtn').style.backgroundColor = '#000033';
+                document.getElementById('resetBtn').style.color = 'white';
+            }
+            if(bossFight === true){
+                if(number == 12){
+                    document.getElementById('homeBtn').style.backgroundColor = '#000033';
+                    document.getElementById('homeBtn').style.color = 'white';
+                }
+            }
+            if(number == 15){
+                if(app.context.root.findByName('Level31').enabled === true){
+                    document.getElementById('doneBtn').style.backgroundColor = '#000033';
+                    document.getElementById('doneBtn').style.color = 'white';
+                }
+            }
+            if(number == 16){
+                if(app.context.root.findByName('Level32').enabled === true){
+                    document.getElementById('thanksBtn').style.backgroundColor = '#000033';
+                    document.getElementById('thanksBtn').style.color = 'white';
+                }
+            }
+            if(number == 17){
+                document.getElementById('opt').style.backgroundColor = '#000033';
+                document.getElementById('opt').style.color = 'white';
+            }
+            if(number == 18){
+                document.getElementById('soundRBtn').style.backgroundColor = '#000033';
+                document.getElementById('soundRBtn').style.color = 'white';
+            }
+            if(number == 19){
+                document.getElementById('musicRBtn').style.backgroundColor = '#000033';
+                document.getElementById('musicRBtn').style.color = 'white';
+            }
+            if(number == 20){
+                document.getElementById('difficultyRBtn').style.backgroundColor = '#000033';
+                document.getElementById('difficultyRBtn').style.color = 'white';
+            }
+        },
+        
+        //A boss is beaten.
+        increaseScore: function(){
+            score += 1;
+        },
+        
+        turnOffTutorial: function(){
+            this.tutorialOn = false;
+        },
+        
+        //Lives deacrease.
+        decreaseLives: function(){
+            this.boss = app.context.root.findByName('boss1');
+            this.boss.setPosition(0,3.6671,2);
+            this.boss.rigidbody.syncEntityToBody();
+            lives -= 1;
+        },
+        
+        //Resets lives
+        resetLives: function(){
+            lives = 3;
+            app.context.root.findByName('resetMe1').enabled = false;
+            app.context.root.findByName('resetMe2').enabled = false;
+            app.context.root.findByName('resetMe3').enabled = false;
+            app.context.root.findByName('resetMe4').enabled = false;
+        },
+        //The game is no longer active.
+        unloadGame:function (){
+            game = false;
+        },
+        reloadMusic: function(){
+            this.timeLeft = 5;
+        },
+        started: function(){
+            init = true;
+        },
+        
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            this.event = document.createEvent('Event');
+            this.event.initEvent("my2Event",true,true); 
+            this.timeLeft -= dt;
+            if(this.timeLeft <= 0){
+                document.getElementById('music').style.left = '-20%';
+            }
+            if(this.timeLeft > 0){
+                if(sound === true){
+                    document.getElementById('music').style.left = '-5px';
+                }
+            }
+            var ai = app.context.root.findByName('aiBoss').getPosition();
+            var ball = app.context.root.findByName('ball').getPosition();
+            
+            //Puts together screens in the main menu.
+            if(stageLoad == 1){
+                this.makeScreen(playWindow, 'playWindowThing', 'Instructions <br><br> Use arrow keys to move. <br><br> Roll on different platforms to gain effects. <br><br> Dont let ai marbles knock you off.', '');
+                this.makeImage(Image, 'image', '', '');
+                this.updatePage(3);
+                makeUI = 4;
+                stageLoad = 0;
+            }
+            if(stageLoad == 2){
+                this.makeScreen(playWindow, 'playWindow', '', '');
+                this.makeButton(play, 'bigminusBtn', '--', '5%', '10%', '5%', '10%',4);
+                this.makeButton(play, 'minusBtn', '-', '5%', '10%', '20%', '10%',5);
+                this.makeButton(play, 'plusBtn', '+', '5%', '10%', '40%', '10%',6);
+                this.makeButton(play, 'bigplusBtn', '++', '5%', '10%', '55%', '10%',7);
+                this.makeButton(play, 'storyBtn', 'GO', '5%', '10%', '80%', '10%',8);
+                this.makeTextBox(menuText, 'levelText', 'Level: ' + level, '20%', '80%', '10%', '80%');
+                this.makeLevel();
+                this.updatePage(5);
+                makeUI = 5;
+                stageLoad = 0;
+            }
+            
+            if(makeUI === true){
+                this.updatePage(1);
+                makeUI = 1;
+            }
+            //Recognises the interaction of the user
+            if(makeUI == 1){
+                document.getElementById('playBtn').onclick = function(){
+                    document.getElementById('music').innerHTML = 'Now Playing: Truth of the Legend <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    app.context.root.findByName('defaultCamera').script.Menu.reloadMusic();
+                    app.context.root.findByName('ball').script.enabled = true;
+                    app.context.root.findByName('ball').setPosition(0,4,-1);
+                    app.context.root.findByName('ball').rigidbody.syncEntityToBody();
+                    bossFight = true;
+                    lives = 3;
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                    makeUI = 6;
+                };
+                document.getElementById('infoBtn').onclick = function(){
+                    tutorial = true;
+                    app.context.root.findByName('ball').script.enabled = true;
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                    app.context.root.findByName('defaultCamera').script.Menu.reloadMusic();
+                    app.context.root.findByName('ball').setPosition(0,4,-1);
+                    app.context.root.findByName('ball').rigidbody.syncEntityToBody();
+                    lives = 3;
+                    makeUI = 0;
+                };
+                document.getElementById('storeBtn').onclick = function(){
+                    document.getElementById('storeBtn').innerHTML = 'Back';
+                    document.getElementById('playBtn').style.visibility = 'hidden';
+                    document.getElementById('infoBtn').style.visibility = 'hidden';
+                    document.getElementById('title').style.visibility = 'hidden';
+                    stageLoad = 2;
+                };
+            }
+            if(makeUI == 2){
+                this.makeButton(play, 'reset1Btn', 'Reset', '5%', '80%', '10%','20%',9);
+                this.makeButton(info, 'home1Btn', 'Home', '75%', '80%', '10%','20%',10);
+                this.makeTextBox(menuText, 'make1Text', 'Lives:' + lives + '<br>Level:' + level, '30%', '100%', '0px', '40%');
+                this.makeBuffer(scores,'scores1','','');
+                this.updatePage(4);
+                this.makeUI = 0;
+                if(init === true){
+                    if(level == 31){
+                        app.context.root.findByName('Level31').script.king.initialize();
+                    }
+                }
+            }
+            if(makeUI == 3){
+                document.getElementById('playBtn').onclick = function(){
+                    document.body.removeChild(document.getElementById('playWindow'));
+                    document.getElementById('playBtn').innerHTML = 'Play';
+                    document.getElementById('infoBtn').style.visibility = 'visible';
+                    document.getElementById('storeBtn').style.visibility = 'visible';
+                    document.getElementById('title').style.visibility = 'visible';
+                    makeUI = 1;
+                };
+            }
+            if(makeUI == 4){
+                document.getElementById('infoBtn').onclick = function(){
+                    document.body.removeChild(document.getElementById('playWindowThing'));
+                    document.getElementById('infoBtn').innerHTML = 'Info';
+                    document.getElementById('playBtn').style.visibility = 'visible';
+                    document.getElementById('storeBtn').style.visibility = 'visible';
+                    document.getElementById('title').style.visibility = 'visible';
+                    makeUI = 1;
+                };
+            }
+            if(makeUI == 5){
+                document.getElementById('levelText').innerHTML = 'Level: ' + level;
+                if(level >= 1 && level <= 10){
+                    chapter = 1;
+                }
+                if(level >= 11 && level <= 20){
+                    chapter = 2;
+                }
+                if(level >= 21 && level <= 30){
+                    chapter = 3;
+                }
+                if(level >= 31 && level <= 32){
+                    chapter = 4;
+                }
+                document.getElementById('plusBtn').onclick = function(){
+                    level += 1;
+                };
+                document.getElementById('minusBtn').onclick = function(){
+                    level -= 1;
+                };
+                document.getElementById('bigplusBtn').onclick = function(){
+                    if(chapter == 1){
+                        level = 11;
+                    }
+                    if(chapter == 2){
+                        level = 21;
+                    }
+                    if(chapter == 3){
+                        level = 31;
+                    }
+                    if(chapter == 4){
+                        level = 1;
+                    }
+                };
+                document.getElementById('bigminusBtn').onclick = function(){
+                    if(chapter == 1){
+                        level = 31;
+                    }
+                    if(chapter == 2){
+                        level = 1;
+                    }
+                    if(chapter == 3){
+                        level = 11;
+                    }
+                    if(chapter == 4){
+                        level = 21;
+                    }
+                };
+                document.getElementById('storyBtn').onclick = function(){
+                    if(chapter == 1){
+                        app.context.root.findByName('Chapter1').enabled = true;
+                        document.getElementById('music').innerHTML = 'Now Playing: Heroic Age <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    }
+                    if(chapter == 2){
+                        document.getElementById('music').innerHTML = 'Now Playing: Industrial Revolution <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    }
+                    if(chapter == 3){
+                        document.getElementById('music').innerHTML = 'Now Playing: Mechanolith <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    }
+                    if(level == 31){
+                        document.getElementById('music').innerHTML = 'Now Playing: Truth of Legend <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    }
+                    if(level == 32){
+                        document.getElementById('music').innerHTML = 'Now Playing: Evening Melodrama <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    }
+                    app.context.root.findByName('defaultCamera').script.Menu.reloadMusic();
+                    makeUI = 2;
+                    app.context.root.findByName('Game').enabled = true;
+                    document.body.removeChild(document.getElementById('menuBuffer'));
+                    document.body.removeChild(document.getElementById('playWindow'));
+                    app.context.root.findByName('ball').script.enabled = true;
+                    game = true;
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                    lives = 3;
+                };
+                document.getElementById('storeBtn').onclick = function(){
+                    document.body.removeChild(document.getElementById('playWindow'));
+                    document.getElementById('playBtn').style.visibility = 'visible';
+                    document.getElementById('infoBtn').style.visibility = 'visible';
+                    document.getElementById('title').style.visibility = 'visible';
+                    document.getElementById('storeBtn').innerHTML = 'Play';
+                    makeUI = 1;
+                };
+                if(level === 0){
+                    level = localStorage.levels;
+                }
+                if(level > localStorage.levels){
+                    level = 1;
+                }
+                if(level == 1){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>The once great ruler of this land became obsessed with the power he had gained from his royal followers. Desiring more, he pulled power from the ground and tore the land to pieces.';
+                }
+                if(level == 2){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>To restore the land, the resistence movement needs a modest sphere to fight the corrupted king. That sphere finds himself on a journey to find the legendary red disks.';
+                }
+                if(level == 3){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>Collecting all the red disks is essential. They hold enormous power that can be used to teleport you over massive distances. The king will sense the disks and come to claim its power.';
+                }
+                if(level == 4){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>The road is not always short, nor is it safe. Sometimes a sphere must take a leap of faith in the hope that it does not fall into the depths of no return.';
+                }
+                if(level == 5){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>Architecture was almost like a work of art in the days before the break. Some places just were not made for being high in the air. Spheres used to take their time ...';
+                }
+                if(level == 6){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>Some places used to be big and solid until the floor collapsed into the abyss below. You can almost feel the aura as if the marketplace is still bustling with life.';
+                }
+                if(level == 7){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>Spheres loved moving things in their world. Not only were the spheres a society of great architects, but they were also great engineers who contributed to mechanisms around the world.';
+                }
+                if(level == 8){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>Children used to play out in the open on great, big, colorful playgrounds. But now the playground remains quiet and the children do not come to visit anymore.';
+                }
+                if(level == 9){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>The king used to have testing grounds to look how powerful he had become. While he was there, he drained red disks to gain even more power. It seams that he may have missed one here.';
+                }
+                if(level == 10){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>This small innocent sphere has received some attention by the king and he has sent one of his minions after our hero. No more joking around, just roll. For now he must just roll away.';
+                }
+                if(level == 11){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>Factories were built in the old days. They used power to create the world, but when the king wanted more for himself, he used them to produce his own mechanical minions.';
+                }
+                if(level == 12){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br>Sometimes you just have to go with the flow, otherwise you will be knocked down by those around you. Now, is not the time to look down, because time is what our hero has least of.';
+                }
+                if(level == 13){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> The factories are like dark mazes. Make sure that you know where you are, because the pathways twist through the factories like snakes through high grass in the desert.';
+                }
+                if(level == 14){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Engineers and mechanics have not been in the factories for a long time. Some pistons have shifted out of alignment and do not function as they did anymore. It might be difficult to move through this mess.';
+                }
+                if(level == 15){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> While experimenting with harder substances, the factories had pistons parallel to the ground to smash minerals into big, thin, high-density sheets of metal. They never intended for spheres to roll under them.';
+                }
+                if(level == 16){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Pistons were not the only parts in a factory that moved. Gigantic cogs connect the factory to its mechanical powersource in the depths below, our hero must be getting deeper.';
+                }
+                if(level == 17){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> The lower he goes the harder it is to get around. After building the contraptions, nobody was concerned that the machine rooms were hard to navigate. Only professional mechanics go this deep.';
+                }
+                if(level == 18){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> This must be one of the old power stations that the factories were built on top of. The core is coming close and so is another entity of evil that lingers in the deep shadows.';
+                }
+                if(level == 19){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> It is easy enough to fall off one cog, its even easier to fall of two. Just keep your grip and do not look down, otherwise you will fly through the air like a rock from a catapult.';
+                }
+                if(level == 20){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> The king has sent one of his minions to protect the inner workings of the factory. Having arrived at the core of the factory, our hero poses a significant threat to the power of the king. Defeat him to gain his powerful red disk.';
+                }
+                if(level == 21){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> As the king tore through the land it became shifted from the normal alignment of tiles, these areas are very unstable and are called the ruins.';
+                }
+                if(level == 22){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Before teleporters were invented, the spheres experimented with particles and discovered portals. Portals were highly unstable and could only be used for non-biotic matter.';
+                }
+                if(level == 23){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> This unstable point in space is starting to get tricky. Objects from all around the kingdom are gathering here. Might the king be planning to build something newer and bigger?';
+                }
+                if(level == 24){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Sometimes you have to ride the wave, or in this case you just have to ride the moving block. Just make sure to stay on top and to not lose your traction.';
+                }
+                if(level == 25){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Before there were long distance teleporters spheres used to use moving blocks to get themselves from place to place. Some platforms had more momentum then others and some had less.';
+                }
+                if(level == 26){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Sometimes platforms are just too brittle to hold anybody anymore and will fall into the depths. Just do not stay still too long. It is essential that you keep moving.';
+                }
+                if(level == 27){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Sometimes things get a little bit tricky. It almost looks like some sort of giant machine. But how can that be possible, if it was all destroyed ages ago?';
+                }
+                if(level == 28){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> It seams the king is building something with all his power. Maybe it is a machine to wreak havoc upon the world, possibly a gigantic robot?';
+                }
+                if(level == 29){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> Everything is getting more complex, it seams that we are coming closer to the source. Maybe it is the final red teleporter. Has it really been that long already?';
+                }
+                if(level == 30){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> This production center has the last of the 30 red disks. Just get it and go to the volcano to continue your training. Do not summon the king until you are ready.';
+                }
+                if(level == 31){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> You place down all 30 red disks to summon the king. The king will send his minions after you. You will have to defeat 7 of his minions to be able to talk some sense into him. Good luck. The king has become a being of energy, the machine he is building must be a new body for him, defeat him before he gains even more power.';
+                }
+                if(level == 32){
+                    document.getElementById('levelText').innerHTML = 'Level: ' + level + '<br> The king has arranged a ceremony for your success. Thank you for saving the world!';
+                }
+                document.getElementById('levelDone').innerHTML = chapter + '.' + level;
+            }
+            if(makeUI == 6){
+                lives = 3;
+                score = 0;
+                this.makeButton(play, 'resetBtn', 'Reset', '5%', '80%', '10%','20%',11);
+                this.makeButton(info, 'homeBtn', 'Home', '75%', '80%', '10%','20%',12);
+                this.makeTextBox(menuText, 'makeText', 'Score:' + score + 'Lives:' + lives + '<br>Highscore:' + localStorage.highscore, '30%', '100%', '0px', '40%');
+                this.makeBuffer(scores,'scores','','');
+                this.updatePage(2);
+                this.innerh = document.getElementById('scores').innerHTML;
+                makeUI = 0;
+            }
+            
+            //Game is enabled
+            if(game === true){
+                if(level >= localStorage.levels){
+                    localStorage.levels = level;
+                }
+                this.reset = false;
+                document.getElementById('make1Text').innerHTML = 'Lives:' + lives + '<br>Level:' + level;
+                app.context.root.findByName('menuCamera').camera.enabled = false;
+                app.context.root.findByName('defaultCamera').camera.enabled = true;
+                app.context.root.findByName('ball').script.enabled = true;
+                if(level == 1){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level1').enabled = true;
+                }
+                if(level == 2){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level1').enabled = false;
+                    app.context.root.findByName('Level2').enabled = true;
+                }
+                if(level == 3){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level2').enabled = false;
+                    app.context.root.findByName('Level3').enabled = true;
+                }
+                if(level == 4){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level3').enabled = false;
+                    app.context.root.findByName('Level4').enabled = true;
+                }
+                if(level == 5){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level4').enabled = false;
+                    app.context.root.findByName('Level5').enabled = true;
+                }
+                if(level == 6){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level5').enabled = false;
+                    app.context.root.findByName('Level6').enabled = true;
+                }
+                if(level == 7){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level6').enabled = false;
+                    app.context.root.findByName('Level7').enabled = true;
+                }
+                if(level == 8){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level7').enabled = false;
+                    app.context.root.findByName('Level8').enabled = true;
+                }
+                if(level == 9){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level8').enabled = false;
+                    app.context.root.findByName('Level9').enabled = true;
+                }
+                if(level == 10){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level9').enabled = false;
+                    app.context.root.findByName('Level10').enabled = true;
+                }
+                if(level == 11){
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level10').enabled = false;
+                    app.context.root.findByName('Level11').enabled = true;
+                    app.context.root.findByName('Chapter1').enabled = false;
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    document.getElementById('music').innerHTML = 'Now Playing: Industrial Revolution <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    app.context.root.findByName('defaultCamera').script.Menu.reloadMusic();
+                }
+                if(level == 12){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level11').enabled = false;
+                    app.context.root.findByName('Level12').enabled = true;
+                }
+                if(level == 13){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level12').enabled = false;
+                    app.context.root.findByName('Level13').enabled = true;
+                }
+                if(level == 14){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level13').enabled = false;
+                    app.context.root.findByName('Level14').enabled = true;
+                }
+                if(level == 15){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level14').enabled = false;
+                    app.context.root.findByName('Level15').enabled = true;
+                }
+                if(level == 16){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level15').enabled = false;
+                    app.context.root.findByName('Level16').enabled = true;
+                }
+                if(level == 17){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level16').enabled = false;
+                    app.context.root.findByName('Level17').enabled = true;
+                }
+                if(level == 18){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level17').enabled = false;
+                    app.context.root.findByName('Level18').enabled = true;
+                }
+                if(level == 19){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level18').enabled = false;
+                    app.context.root.findByName('Level19').enabled = true;
+                }
+                if(level == 20){
+                    app.context.root.findByName('Chapter2').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level19').enabled = false;
+                    app.context.root.findByName('Level20').enabled = true;
+                }
+                if(level == 21){
+                    app.context.root.findByName('Chapter2').enabled = false;
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level20').enabled = false;
+                    app.context.root.findByName('Level21').enabled = true;
+                    document.getElementById('music').innerHTML = 'Now Playing: Mechanolith <br>Kevin MacLeod (incompetech.com)<br>Licensed under Creative Commons: By Attribution 3.0<br>http://creativecommons.org/licenses/by/3.0/ <br> Sound effects by http://www.pacdv.com/sounds/';
+                    app.context.root.findByName('defaultCamera').script.Menu.reloadMusic();
+                }
+                if(level == 22){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level21').enabled = false;
+                    app.context.root.findByName('Level22').enabled = true;
+                }
+                if(level == 23){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level22').enabled = false;
+                    app.context.root.findByName('Level23').enabled = true;
+                }
+                if(level == 24){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level23').enabled = false;
+                    app.context.root.findByName('Level24').enabled = true;
+                }
+                if(level == 25){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level24').enabled = false;
+                    app.context.root.findByName('Level25').enabled = true;
+                }
+                if(level == 26){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level25').enabled = false;
+                    app.context.root.findByName('Level26').enabled = true;
+                }
+                if(level == 27){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level26').enabled = false;
+                    app.context.root.findByName('Level27').enabled = true;
+                }
+                if(level == 28){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level27').enabled = false;
+                    app.context.root.findByName('Level28').enabled = true;
+                }
+                if(level == 29){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level28').enabled = false;
+                    app.context.root.findByName('Level29').enabled = true;
+                }
+                if(level == 30){
+                    app.context.root.findByName('Chapter3').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level29').enabled = false;
+                    app.context.root.findByName('Level30').enabled = true;
+                }
+                if(level == 31){
+                    app.context.root.findByName('Chapter4').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level31').enabled = true;
+                }
+                if(level == 32){
+                    app.context.root.findByName('Chapter4').enabled = true;
+                    app.context.root.findByName('Menu').enabled = false;
+                    app.context.root.findByName('Level32').enabled = true;
+                }
+                document.getElementById('reset1Btn').onclick = function(){
+                    app.context.root.findByName('resetMe1').enabled = false;
+                    app.context.root.findByName('resetMe2').enabled = false;
+                    app.context.root.findByName('resetMe3').enabled = false;
+                    app.context.root.findByName('resetMe4').enabled = false;
+                    app.context.root.findByName('boss1').script.resetBoss.bossFunction();
+                    app.context.root.findByName('ball').script.teleportable.unReset();
+                    app.context.root.findByName('ball').script.teleportable.menu();
+                    document.dispatchEvent(this.event);
+                    app.context.root.findByName('ball').setPosition(0,3.4,-1);
+                    app.context.root.findByName('ball').rigidbody.linearVelocity = pc.Vec3.ZERO;
+                    app.context.root.findByName('ball').rigidbody.angularVelocity = pc.Vec3.ZERO;
+                    app.context.root.findByName('ball').rigidbody.syncEntityToBody();
+                    lives = 3;
+                };
+                if(lives <= 1){
+                    app.context.root.findByName('ball').script.teleportable.Reset();
+                }
+                if(lives > 1){
+                    app.context.root.findByName('ball').script.teleportable.unReset();
+                }
+                document.getElementById('home1Btn').onclick = function(){
+                    app.context.root.findByName('resetMe1').enabled = false;
+                    app.context.root.findByName('resetMe2').enabled = false;
+                    app.context.root.findByName('resetMe3').enabled = false;
+                    app.context.root.findByName('resetMe4').enabled = false;
+                    app.context.root.findByName('aiChap2').setPosition(0,4,-4);
+                    app.context.root.findByName('aiChap2').rigidbody.syncEntityToBody();
+                    game = false;
+                    app.context.root.findByName('defaultCamera').camera.enabled = false;
+                    app.context.root.findByName('menuCamera').camera.enabled = true;
+                    app.context.root.findByName('ball').script.enabled = false;
+                    app.context.root.findByName('defaultCamera').script.Menu.initialize();
+                    app.context.root.findByName('boss1').script.resetBoss.bossFunction();
+                    app.context.root.findByName('Menu').enabled = true;
+                    app.context.root.findByName('Game').enabled = false;
+                    document.body.removeChild(document.getElementById('scores1'));
+                    app.context.root.findByName('ball').setPosition(0,3.4,-1);
+                    app.context.root.findByName('ball').rigidbody.syncEntityToBody();
+                    app.context.root.findByName('ball').rigidbody.linearVelocity = pc.Vec3.ZERO;
+                    app.context.root.findByName('ball').rigidbody.angularVelocity = pc.Vec3.ZERO;
+                    app.context.root.findByName('Level1').enabled = false;
+                    app.context.root.findByName('Level2').enabled = false;
+                    app.context.root.findByName('Level3').enabled = false;
+                    app.context.root.findByName('Level4').enabled = false;
+                    app.context.root.findByName('Level5').enabled = false;
+                    app.context.root.findByName('Level6').enabled = false;
+                    app.context.root.findByName('Level7').enabled = false;
+                    app.context.root.findByName('Level8').enabled = false;
+                    app.context.root.findByName('Level9').enabled = false;
+                    app.context.root.findByName('Level10').enabled = false;
+                    app.context.root.findByName('Level11').enabled = false;
+                    app.context.root.findByName('Level12').enabled = false;
+                    app.context.root.findByName('Level13').enabled = false;
+                    app.context.root.findByName('Level14').enabled = false;
+                    app.context.root.findByName('Level15').enabled = false;
+                    app.context.root.findByName('Level16').enabled = false;
+                    app.context.root.findByName('Level17').enabled = false;
+                    app.context.root.findByName('Level18').enabled = false;
+                    app.context.root.findByName('Level19').enabled = false;
+                    app.context.root.findByName('Level20').enabled = false;
+                    app.context.root.findByName('Level21').enabled = false;
+                    app.context.root.findByName('Level22').enabled = false;
+                    app.context.root.findByName('Level23').enabled = false;
+                    app.context.root.findByName('Level24').enabled = false;
+                    app.context.root.findByName('Level25').enabled = false;
+                    app.context.root.findByName('Level26').enabled = false;
+                    app.context.root.findByName('Level27').enabled = false;
+                    app.context.root.findByName('Level28').enabled = false;
+                    app.context.root.findByName('Level29').enabled = false;
+                    app.context.root.findByName('Level30').enabled = false;
+                    app.context.root.findByName('Level31').enabled = false;
+                    app.context.root.findByName('Level32').enabled = false;
+                    app.context.root.findByName('Chapter1').enabled = false;
+                    app.context.root.findByName('Chapter2').enabled = false;
+                    app.context.root.findByName('Chapter3').enabled = false;
+                    app.context.root.findByName('Chapter4').enabled = false;
+                    app.context.root.findByName('boss1').script.resetBoss.bossFunction();
+                    lives = 3;
+                };
+                makeUI = 0;
+            }
+            
+            //Tutorial is enabled
+            if(tutorial === true){
+                document.body.removeChild(document.getElementById('menuBuffer'));
+                app.context.root.findByName('menuCamera').camera.enabled = false;
+                app.context.root.findByName('defaultCamera').camera.enabled = true;
+                app.context.root.findByName('ball').script.enabled = true;
+                app.context.root.findByName('Tutorial').enabled = true;
+                app.context.root.findByName('Menu').enabled = false;
+                if(this.tutorialStarted === true){
+                    app.context.root.findByName('Tutorial').script.tutorial.initialize();
+                }
+                app.context.root.findByName('Tutorial').script.enabled = true;
+                tutorial = false;
+                this.tutorialStarted = true;
+                this.tutorialOn = true;
+            }
+            
+            //Boss fight is enabled
+            if(bossFight === true){
+                app.context.root.findByName('menuCamera').camera.enabled = false;
+                app.context.root.findByName('defaultCamera').camera.enabled = true;
+                app.context.root.findByName('Menu').enabled = false;
+                app.context.root.findByName('BossArena').enabled = true;
+                app.context.root.findByName('ball').script.enabled = true;
+                document.getElementById('makeText').innerHTML = 'Score:' + score + '  ' + 'Lives:' + lives + '<br>Highscore:' + localStorage.highscore;
+                document.getElementById('homeBtn').onclick = function(){
+                    makeChange = true;
+                };
+                document.getElementById('resetBtn').onclick = function(){
+                    lives = 3;
+                    score = 0;
+                };
+                if(score >= localStorage.highscore){
+                    localStorage.highscore = score;
+                }
+                if(lives <= 0){
+                    score = 0;
+                    lives = 3;
+                }
+                if(makeChange === true){
+                    bossFight = false;
+                    app.context.root.findByName('defaultCamera').camera.enabled = false;
+                    app.context.root.findByName('menuCamera').camera.enabled = true;
+                    app.context.root.findByName('ball').script.enabled = false;
+                    app.context.root.findByName('Menu').enabled = true;
+                    app.context.root.findByName('BossArena').enabled = false;
+                    app.context.root.findByName('defaultCamera').script.Menu.initialize();
+                    document.body.removeChild(document.getElementById('scores'));
+                    app.context.root.findByName('ball').setPosition(0,3.4,-1);
+                    app.context.root.findByName('ball').rigidbody.syncEntityToBody();
+                    app.context.root.findByName('ball').rigidbody.linearVelocity = pc.Vec3.ZERO;
+                    app.context.root.findByName('ball').rigidbody.angularVelocity = pc.Vec3.ZERO;
+                    app.context.root.findByName('aiBoss').setPosition(0,1,-4.6);
+                    app.context.root.findByName('aiBoss').rigidbody.syncEntityToBody();
+                    app.context.root.findByName('aiBoss').rigidbody.linearVelocity = pc.Vec3.ZERO;
+                    app.context.root.findByName('aiBoss').rigidbody.angularVelocity = pc.Vec3.ZERO;
+                    makeChange = false;
+                    lives = 3;
+                }
+            }
+        }
+    };
+
+    return Menu;
+});

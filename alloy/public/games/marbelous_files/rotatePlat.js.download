@@ -1,0 +1,25 @@
+pc.script.create('rotatePlat', function (app) {
+    // Creates a new RotatePlat instance
+    var RotatePlat = function (entity) {
+        this.entity = entity;
+    };
+
+    RotatePlat.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            this.timeLeft = 0.5;
+            this.rotate = 0;
+        },
+
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            this.timeLeft -= dt;
+            if(this.timeLeft <= 0){
+                this.entity.rigidbody.applyTorque(0,2,0);
+                this.timeLeft = 0.5;
+            }
+        }
+    };
+
+    return RotatePlat;
+});

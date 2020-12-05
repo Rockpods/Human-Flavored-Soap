@@ -1,0 +1,122 @@
+pc.script.create('tutorial', function (app) {
+    // Creates a new Tutorial instance
+    var Tutorial = function (entity) {
+        this.entity = entity;
+    };
+    var bigdiv = bigdiv;
+    var bigbtn = bigbtn;
+    var teleport = teleport;
+    var teleportbtn = teleportbtn;
+    var ai = ai;
+    var aibtn = aibtn;
+    var tutorialStage = 0;
+    var move = move;
+    var movebtn = movebtn;
+    var finish = finish;
+    var finishbtn = finishbtn;
+    Tutorial.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            this.makeBuffer(bigdiv, 'start', 'Welcome to Marbleous <br> Use the arrow keys to roll around. All round, colored platforms will have some sort of effect on the game, they act as triggers.','','20%');
+            tutorialStage = 1;
+        },
+        makeScreen: function(namel, idl, name, position){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = '70%';
+            namel.style.height = '75%';
+            namel.style.top = '5%';
+            namel.style.left = '15%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge green';
+            namel.style.borderRadius = '5px';
+            namel.style.opacity = '0.8';
+            namel.style.backgroundColor = '#101010';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        makeBuffer: function(namel, idl, name, position, height){
+            namel = document.createElement('div');
+            namel.style.position = 'absolute';
+            namel.style.width = '85%';
+            namel.style.height = height;
+            namel.style.top = '75%';
+            namel.style.left = '7.5%';
+            namel.style.textAlign = 'center';
+            namel.style.color = 'white';
+            namel.style.fontSize = 'xx-large';
+            namel.style.border = '5px ridge #202020';
+            namel.style.borderRadius = '5px';
+            namel.style.backgroundColor = '#000033';
+            namel.style.opacity = '0.8';
+            namel.id = idl;
+            this.namel = namel;
+            this.namel.innerHTML = name;
+            document.body.appendChild(namel);
+            
+        },
+        resetBoss: function(){
+            app.context.root.findByName('ai').setLocalPosition(0,4,-18);
+            app.context.root.findByName('ai').rigidbody.syncEntityToBody();
+        },
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            this.ballPos = app.context.root.findByName('ball').getPosition();
+            this.ai = app.context.root.findByName('ai').getPosition();
+            if(tutorialStage == 1){
+                if(this.ballPos.z <= -1.5){
+                    document.body.removeChild(document.getElementById('start'));
+                    tutorialStage = -1;
+                }
+            }
+            if(this.ballPos.z <= -1.5 && tutorialStage === -1){
+                this.makeBuffer(teleport, 'teleport', 'Teleporters <br>Step on to teleporters platforms to go from place to place. <br> These will also act as checkpoints. They may be blue or green.','','20%');
+                tutorialStage = 2;
+            }
+            if(tutorialStage == 2){
+                if(this.ballPos.z <= -5){
+                    document.body.removeChild(document.getElementById('teleport'));
+                    tutorialStage = -2;
+                }
+            }
+            if(this.ballPos.z <= -10 && tutorialStage === -2){
+                this.makeBuffer(ai, 'ai', 'Evil Minions <br> Defeat the boss to move on in the level, or to the exit level. Try rolling near the edges, the evil minions may be big, but that makes it hard to change directions.','','20%');
+                tutorialStage = 3;
+            }
+            if(tutorialStage == 3){
+                if(this.ballPos.z <= -15){
+                    document.body.removeChild(document.getElementById('ai'));
+                    tutorialStage = -3;
+                }
+            }
+            if(this.ai.y <= 0 && tutorialStage == -3){
+                this.makeBuffer(move, 'move', 'Moving On <br> Congratulations, you have just beat your first evil minion. This platform will allow you to bounce.','','20%');
+                tutorialStage = 4;
+                app.context.root.findByName('resetMe').enabled = true;
+            }
+            if(tutorialStage == 4){
+                if(this.ballPos.z <= -25){
+                    document.body.removeChild(document.getElementById('move'));
+                    tutorialStage = -4;
+                }
+            }
+            if(this.ballPos.z <= -25 && tutorialStage == -4){
+                this.makeBuffer(finish, 'finish', 'The Real Thing <br> You may notice some obstacles such as portals throughout the game. They may help you, or they may stop you. Step on the red teleporter to end this tutorial.','','20%');
+                tutorialStage = 5;
+            }
+            if(tutorialStage == 5){
+                if(this.ballPos.z <= -27){
+                    document.body.removeChild(document.getElementById('finish'));
+                    tutorialStage = -5;
+                }
+            }
+        },
+    };
+
+    return Tutorial;
+});

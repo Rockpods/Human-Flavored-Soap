@@ -1,0 +1,41 @@
+pc.script.create('finish', function (app) {
+    // Creates a new Finish instance
+    var Finish = function (entity) {
+        this.entity = entity;
+    };
+    var reallyStart = 0;
+    var zeroVec = pc.Vec3.ZERO;
+    Finish.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            if(this.entity == app.context.root.findByName('finish-x3')){
+                this.entity.collision.on('triggerenter',function(){
+                    app.context.root.findByName('ball').rigidbody.linearVelocity = zeroVec;
+                    app.context.root.findByName('ball').rigidbody.angularVelocity = zeroVec;
+                    app.context.root.findByName('ai').setPosition(0,4,-18);
+                    app.context.root.findByName('Menu').enabled = true;
+                    app.context.root.findByName('Tutorial').enabled = false;
+                    app.context.root.findByName('ai').rigidbody.syncEntityToBody();
+                    app.context.root.findByName('ai').rigidbody.linearVelocity = zeroVec;
+                    app.context.root.findByName('ai').rigidbody.angularVelocity = zeroVec;
+                    app.context.root.findByName('defaultCamera').script.Menu.unloadGame();
+                    app.context.root.findByName('defaultCamera').script.Menu.turnOffTutorial();
+                    app.context.root.findByName('defaultCamera').script.Menu.initialize();
+                    app.context.root.findByName('menuCamera').camera.enabled = true;
+                    app.context.root.findByName('defaultCamera').camera.enabled = false;
+                    app.context.root.findByName('ball').script.enabled = false;
+                    app.context.root.findByName('ball').setPosition(0,3.4,-1);
+                    app.context.root.findByName('ball').rigidbody.syncEntityToBody();
+                    app.context.root.findByName('resetMe').enabled = false;
+                    reallyStart = 0;
+                },this);
+            }
+        },
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            reallyStart = 1;
+        }
+    };
+
+    return Finish;
+});

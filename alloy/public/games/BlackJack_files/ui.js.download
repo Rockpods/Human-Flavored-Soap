@@ -1,0 +1,555 @@
+//Stop highlighting text elements when double clicking UI
+function clearSelection() {
+    if(document.selection && document.selection.empty) {
+        document.selection.empty();
+    } else if(window.getSelection) {
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+    }
+}
+
+pc.script.create('ui', function (app) {
+        
+    // Creates a new Ui instance
+    var Ui = function (entity) {
+        this.entity = entity;
+        
+    };
+
+    Ui.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            this.getWindowSizes();
+            var that = this;
+            $( window ).resize(function() {
+                that.getWindowSizes();
+            });
+            
+            this.updateScore(true, "");
+            this.updateScore(false, "");
+        },
+
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            clearSelection();
+        },
+        
+        getWindowSizes: function(){
+            this.subWidth = app.graphicsDevice.width;
+            this.subHeight = app.graphicsDevice.height;
+            this.screenWidth = $(window).width();
+            this.screenHeight = $(window).height();
+            this.widthMargin = (this.screenWidth-this.subWidth)/2;
+            this.tSize = ((this.subWidth*0.15)-2)/10;
+            
+            //redraw visible items
+            if(this.buttonsPaper)
+                this.drawTwistAndStickButtons();
+            
+            if(this.surePaper)
+                this.drawAreYouSure();
+            
+            if(this.chipPaper)
+                this.drawChipOverlay();
+
+            if(this.bettingPaper && this.fundsPaper)
+                app.root.findByName("Main").script.game.updateBetting();
+            
+            if(this.dealerScorePaper && this.playerScorePaper)
+                app.root.findByName("Main").script.cardmanager.drawBothScores();
+        },
+        
+        clearPaper: function(paper){
+            if(paper){
+              paper.remove();
+            }
+            else {
+                this.dealerScorePaper.remove();
+                this.playerScorePaper.remove();
+            }
+        },
+        
+        updateScore: function(dealer, score){
+            if(dealer){
+                if(this.dealerScorePaper)
+                    this.clearPaper(this.dealerScorePaper);
+                
+                this.dealerScorePaper = Raphael(this.screenWidth/2 - (this.screenWidth * 0.1), this.screenHeight*0.05, this.screenWidth * 0.2, this.screenHeight*0.1);
+                this.dealerScorePaper.text(this.screenWidth * 0.2/2, this.tSize, score).attr({
+                    font: this.tSize*2 + "px Arial, Helvetica, sans-serif",
+                    fill: "#fff",
+                    opacity: 0.85
+                });
+            }
+            else {
+                if(this.playerScorePaper)
+                    this.clearPaper(this.playerScorePaper);
+                
+                this.playerScorePaper = Raphael(this.screenWidth/2 - (this.screenWidth * 0.1), this.screenHeight*0.90, this.screenWidth * 0.2, this.screenHeight*0.1);
+                this.playerScorePaper.text(this.screenWidth * 0.2/2, this.tSize, score).attr({
+                    font: this.tSize*2 + "px Arial, Helvetica, sans-serif",
+                    fill: "#fff",
+                    opacity: 0.85
+                });
+            }
+        },
+        
+        hideScore: function(dealer){
+            if(dealer){
+                if(this.dealerScorePaper)
+                    this.clearPaper(this.dealerScorePaper);
+                
+                this.dealerScorePaper = Raphael(this.screenWidth/2 - (this.screenWidth * 0.1), this.screenHeight*0.05, this.screenWidth * 0.2, this.screenHeight*0.1);
+                this.dealerScorePaper.text(this.screenWidth * 0.2/2, this.tSize, "").attr({
+                    font: this.tSize + "px Arial, Helvetica, sans-serif",
+                    fill: "#fff",
+                    opacity: 0.75
+                });
+            }  
+            else {
+               if(this.playerScorePaper)
+                    this.clearPaper(this.playerScorePaper);
+                
+                this.playerScorePaper = Raphael(this.screenWidth/2 - (this.screenWidth * 0.1), this.screenHeight*0.90, this.screenWidth * 0.2, this.screenHeight*0.1);
+                this.playerScorePaper.text(this.screenWidth * 0.2/2, this.tSize, "").attr({
+                    font: this.tSize + "px Arial, Helvetica, sans-serif",
+                    fill: "#fff",
+                    opacity: 0.75
+                }); 
+            }
+        },
+        
+        drawTwistAndStickButtons: function(){
+            var buttonSize =  this.screenHeight * 0.05;
+            
+            if(this.buttonsPaper)
+                this.clearPaper(this.buttonsPaper);
+            
+            this.buttonsPaper = Raphael(this.screenWidth * 0.6, this.screenHeight * 0.75, this.screenWidth * 0.4, this.screenHeight * 0.25);
+
+            //Display Rectangles
+            
+            this.buttonsPaper.rect(3,3,buttonSize*3,buttonSize,10).attr({
+               "stroke-width": 5,
+                stroke: "#fff",
+                "stroke-opacity": 0.85
+            });
+            
+            this.buttonsPaper.rect(3,buttonSize*1.5+3,buttonSize*3,buttonSize,10).attr({
+               "stroke-width": 5,
+                stroke: "#fff",
+                "stroke-opacity": 0.85
+            });
+            
+            this.buttonsPaper.rect(3,buttonSize*3+3,buttonSize*3,buttonSize,10).attr({
+               "stroke-width": 5,
+                stroke: "#fff",
+                "stroke-opacity": 0.85
+            });
+            
+            
+            //Display Text
+            this.buttonsPaper.text(buttonSize*1.5,buttonSize*0.5+3, "Deal").attr({
+                font: this.tSize + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85
+            });
+            
+            this.buttonsPaper.text(buttonSize*1.5,buttonSize*2+3, "Hit").attr({
+                font: this.tSize + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85
+            });
+                      
+            this.buttonsPaper.text(buttonSize*1.5,buttonSize*3.5+3, "Stand").attr({
+                font: this.tSize + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85
+            });
+            
+            var twist = this.buttonsPaper.rect(0,buttonSize*1.5+3,buttonSize*3,buttonSize).attr({
+                "stroke-width": 0,
+                fill: "#000",
+                "fill-opacity": 0
+            });
+
+            var stick = this.buttonsPaper.rect(0,buttonSize*3+3,buttonSize*3,buttonSize).attr({
+                "stroke-width": 0,
+                fill: "#000",
+                "fill-opacity": 0
+            });
+            
+            var deal = this.buttonsPaper.rect(0,3,buttonSize*3,buttonSize).attr({
+                "stroke-width": 0,
+                fill: "#000",
+                "fill-opacity": 0
+            });
+            
+            var that= this;
+            twist.click(function(){
+                app.root.findByName("Main").script.cardmanager.twist();
+            });
+            
+            stick.click(function(){
+                app.root.findByName("Main").script.cardmanager.stick();
+            });    
+            
+            deal.click(function(){
+                app.root.findByName("Main").script.cardmanager.initialDeal(); 
+            });
+            
+        },
+        
+        drawAreYouSure: function(){
+            var buttonSize =  this.screenHeight * 0.05;
+            
+            if(this.surePaper)
+                this.clearPaper(this.surePaper);
+            
+            this.surePaper = Raphael(this.screenWidth * 0.6 + buttonSize * 3.5, this.screenHeight * 0.75 + 3, this.screenWidth * 0.3, this.screenHeight * 0.25);
+            
+            //Display Rectangles
+            this.surePaper.rect(3,buttonSize*1.5, buttonSize * 6, buttonSize * 2.5, 10).attr({
+               "stroke-width": 5,
+                stroke: "#fff",
+                "stroke-opacity": 0.85
+            });
+            
+            this.surePaper.rect(buttonSize*0.5,buttonSize*2.625,buttonSize*2,buttonSize,10).attr({
+               "stroke-width": 5,
+                stroke: "#fff",
+                "stroke-opacity": 0.85
+            });
+            
+            this.surePaper.rect(buttonSize*3.5,buttonSize*2.625,buttonSize*2,buttonSize,10).attr({
+               "stroke-width": 5,
+                stroke: "#fff",
+                "stroke-opacity": 0.85
+            });
+            
+            //Display Text
+            this.surePaper.text(buttonSize*3, buttonSize * 2, "Are You Sure?").attr({
+                font: this.tSize + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85
+            });
+            
+            this.surePaper.text(buttonSize*1.5,buttonSize*3.125, "Yes").attr({
+                font: this.tSize + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85
+            });
+            
+            this.surePaper.text(buttonSize*4.5,buttonSize*3.125, "No").attr({
+                font: this.tSize + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85
+            });
+            
+            //Clickers
+            var yes = this.surePaper.rect(buttonSize*0.5,buttonSize*2.625,buttonSize*2,buttonSize).attr({
+                "stroke-width": 0,
+                fill: "#000",
+                "fill-opacity": 0
+            });
+            
+            var no = this.surePaper.rect(buttonSize*3.5,buttonSize*2.625,buttonSize*2,buttonSize).attr({
+                "stroke-width": 0,
+                fill: "#000",
+                "fill-opacity": 0
+            });
+            
+            var that = this;
+            yes.click(function(){
+                app.root.findByName("Main").script.cardmanager.twist(true);
+                that.clearPaper(that.surePaper);
+            });
+            
+            no.click(function(){
+                that.clearPaper(that.surePaper);
+            });
+        },
+        
+        animatedText: function(text){            
+            if(this.midPaper)
+                this.clearPaper(this.midPaper);
+        
+            this.midPaper = Raphael(0,this.screenHeight*0.3,this.screenWidth, this.screenHeight*0.2);
+            this.midPaper.rect(0,0,this.screenWidth,this.screenHeight*0.2).attr({
+                fill:"#000",
+                "stroke-width": 0,
+                "fill-opacity": 0
+            });
+            
+            var animatedText = this.midPaper.text(-this.screenWidth * 0.05,this.screenHeight*0.1,text).attr({
+                font: this.tSize*2 + "px Arial, Helvetica, sans-serif",
+                fill: "#fff" ,
+                opacity: 0.85,
+                "text-anchor": "start"
+            });
+                        
+            animatedText.animate({x:this.screenWidth * 0.05, y:this.screenHeight*0.1}, 1300, 'backOut');
+            
+            var that = this;
+            setTimeout(function(){
+                that.clearPaper(that.midPaper);
+            },2500);
+        },
+        
+        drawPokerChips: function(paper){
+            //Draw 4 poker chips
+            var diameter = this.screenWidth * 0.03;
+            var maxStroke = this.screenWidth * 0.005;
+            var midPoints = [
+                {x: this.screenWidth * 0.06, y:this.screenHeight * 0.1},
+                {x: this.screenWidth * 0.15, y:this.screenHeight * 0.1},
+                {x: this.screenWidth * 0.24, y:this.screenHeight * 0.1},
+                {x: this.screenWidth * 0.33, y:this.screenHeight * 0.1}
+            ];
+            
+            var rad = Math.PI / 180;
+            function sector(cx, cy, r, startAngle, endAngle, params) {
+                    var x1 = cx + r * Math.cos(-startAngle * rad),
+                    x2 = cx + r * Math.cos(-endAngle * rad),
+                    y1 = cy + r * Math.sin(-startAngle * rad),
+                    y2 = cy + r * Math.sin(-endAngle * rad);
+                return paper.path(["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 0, x2, y2, "z"]).attr(params);
+            }
+            
+            //1 Chip
+            paper.circle(midPoints[0].x, midPoints[0].y, diameter).attr({
+               "fill": "#fff",
+               "stroke": "#fff",
+               "stroke-width": maxStroke
+            });
+            
+            sector(midPoints[0].x,midPoints[0].y,diameter*1.1,0,30,{"fill":"blue", "stroke-width": 0});
+            sector(midPoints[0].x,midPoints[0].y,diameter*1.1,60,90,{"fill":"blue", "stroke-width": 0});
+            sector(midPoints[0].x,midPoints[0].y,diameter*1.1,120,150,{"fill":"blue", "stroke-width": 0});
+            sector(midPoints[0].x,midPoints[0].y,diameter*1.1,180,210,{"fill":"blue", "stroke-width": 0});
+            sector(midPoints[0].x,midPoints[0].y,diameter*1.1,240,270,{"fill":"blue", "stroke-width": 0});
+            sector(midPoints[0].x,midPoints[0].y,diameter*1.1,300,330,{"fill":"blue", "stroke-width": 0});
+            
+            paper.circle(midPoints[0].x, midPoints[0].y, diameter-maxStroke).attr({
+               "fill": "#fff",
+               "stroke": "#fff",
+               "stroke-width": maxStroke/2
+            });
+            
+            paper.circle(midPoints[0].x, midPoints[0].y, diameter-maxStroke).attr({
+               "fill": "#fff",
+               "stroke": "#BCBA84",
+                "stroke-opacity": 0.5,
+               "stroke-width": maxStroke/2,
+                "fill-opacity": 0
+            });
+            
+            paper.text(midPoints[0].x,midPoints[0].y,"1").attr({
+                font: this.tSize*1.5 + "px Arial, Helvetica, sans-serif",
+                fill: "#BCBA84" 
+            });
+            
+            
+            
+            
+            //5 Chip
+            paper.circle(midPoints[1].x, midPoints[1].y, diameter).attr({
+               "fill": "#fff",
+               "stroke": "#fff",
+               "stroke-width": maxStroke
+            });
+            
+            sector(midPoints[1].x,midPoints[1].y,diameter*1.1,0,30,{"fill":"red", "stroke-width": 0});
+            sector(midPoints[1].x,midPoints[1].y,diameter*1.1,60,90,{"fill":"red", "stroke-width": 0});
+            sector(midPoints[1].x,midPoints[1].y,diameter*1.1,120,150,{"fill":"red", "stroke-width": 0});
+            sector(midPoints[1].x,midPoints[1].y,diameter*1.1,180,210,{"fill":"red", "stroke-width": 0});
+            sector(midPoints[1].x,midPoints[1].y,diameter*1.1,240,270,{"fill":"red", "stroke-width": 0});
+            sector(midPoints[1].x,midPoints[1].y,diameter*1.1,300,330,{"fill":"red", "stroke-width": 0});
+            
+            paper.circle(midPoints[1].x, midPoints[1].y, diameter-maxStroke).attr({
+               "fill": "red",
+               "stroke": "#fff",
+               "stroke-width": maxStroke/2
+            });
+            
+            paper.circle(midPoints[1].x, midPoints[1].y, diameter-maxStroke).attr({
+               "fill": "#fff",
+               "stroke": "#BCBA84",
+                "stroke-opacity": 0.5,
+               "stroke-width": maxStroke/2,
+                "fill-opacity": 0
+            });
+            
+            paper.text(midPoints[1].x,midPoints[1].y,"5").attr({
+                font: this.tSize*1.5 + "px Arial, Helvetica, sans-serif",
+                fill: "#BCBA84" 
+            });
+            
+            
+            
+            //50 Chip
+            paper.circle(midPoints[2].x, midPoints[2].y, diameter).attr({
+               "fill": "blue",
+               "stroke": "blue",
+               "stroke-width": maxStroke
+            });
+            
+            sector(midPoints[2].x,midPoints[2].y,diameter*1.1,0,30,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[2].x,midPoints[2].y,diameter*1.1,60,90,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[2].x,midPoints[2].y,diameter*1.1,120,150,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[2].x,midPoints[2].y,diameter*1.1,180,210,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[2].x,midPoints[2].y,diameter*1.1,240,270,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[2].x,midPoints[2].y,diameter*1.1,300,330,{"fill":"white", "stroke-width": 0});
+            
+            paper.circle(midPoints[2].x, midPoints[2].y, diameter-maxStroke).attr({
+               "fill": "blue",
+               "stroke": "blue",
+               "stroke-width": maxStroke/2
+            });
+            
+            paper.circle(midPoints[2].x, midPoints[2].y, diameter-maxStroke).attr({
+               "fill": "#fff",
+               "stroke": "#BCBA84",
+                "stroke-opacity": 0.5,
+               "stroke-width": maxStroke/2,
+                "fill-opacity": 0
+            });
+            
+            paper.text(midPoints[2].x,midPoints[2].y,"50").attr({
+                font: this.tSize*1.5 + "px Arial, Helvetica, sans-serif",
+                fill: "#BCBA84" 
+            });
+            
+            
+            
+            //100 Chip
+            paper.circle(midPoints[3].x, midPoints[3].y, diameter).attr({
+               "fill": "black",
+               "stroke": "black",
+               "stroke-width": maxStroke
+            });
+            
+            sector(midPoints[3].x,midPoints[3].y,diameter*1.1,0,30,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[3].x,midPoints[3].y,diameter*1.1,60,90,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[3].x,midPoints[3].y,diameter*1.1,120,150,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[3].x,midPoints[3].y,diameter*1.1,180,210,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[3].x,midPoints[3].y,diameter*1.1,240,270,{"fill":"white", "stroke-width": 0});
+            sector(midPoints[3].x,midPoints[3].y,diameter*1.1,300,330,{"fill":"white", "stroke-width": 0});
+            
+            paper.circle(midPoints[3].x, midPoints[3].y, diameter-maxStroke).attr({
+               "fill": "black",
+               "stroke": "black",
+               "stroke-width": maxStroke/2
+            });
+            
+            paper.circle(midPoints[3].x, midPoints[3].y, diameter-maxStroke).attr({
+               "fill": "#fff",
+               "stroke": "#BCBA84",
+                "stroke-opacity": 0.5,
+               "stroke-width": maxStroke/2,
+                "fill-opacity": 0
+            });
+            
+            paper.text(midPoints[3].x,midPoints[3].y,"100").attr({
+                font: this.tSize*1.5 + "px Arial, Helvetica, sans-serif",
+                fill: "#BCBA84" 
+            });
+        },
+        
+        drawChipOverlay: function(){
+            if(this.chipPaper)
+                this.clearPaper(this.chipPaper);
+            
+            this.chipPaper = Raphael(0,this.screenHeight*0.8,this.screenWidth * 0.45, this.screenHeight * 0.2);
+            
+            this.drawPokerChips(this.chipPaper);
+            
+            //Draw clickable overlays
+            var chip1 = this.chipPaper.rect(this.screenWidth * 0.015,0,this.screenWidth * 0.09, this.screenHeight * 0.2).attr({
+                fill:"#000",
+                "stroke-width": 0,
+                "fill-opacity": 0
+            });
+            
+            var chip2 = this.chipPaper.rect(this.screenWidth * 0.105,0,this.screenWidth * 0.09, this.screenHeight * 0.2).attr({
+                fill:"#000",
+                "stroke-width": 0,
+                "fill-opacity": 0
+            });
+            
+            var chip3 = this.chipPaper.rect(this.screenWidth * 0.195,0,this.screenWidth * 0.09, this.screenHeight * 0.2).attr({
+                fill:"#000",
+                "stroke-width": 0,
+                "fill-opacity": 0
+            });
+            
+            var chip4 = this.chipPaper.rect(this.screenWidth * 0.285,0,this.screenWidth * 0.09, this.screenHeight * 0.2).attr({
+                fill:"#000",
+                "stroke-width": 0,
+                "fill-opacity": 0
+            });
+            
+            chip1.click(function(){
+                app.root.findByName("Main").script.game.placeChip(1);
+            });
+            
+            chip2.click(function(){
+                app.root.findByName("Main").script.game.placeChip(5);
+            });
+            
+            chip3.click(function(){
+                app.root.findByName("Main").script.game.placeChip(50);
+            });
+            
+            chip4.click(function(){
+                app.root.findByName("Main").script.game.placeChip(100);
+            });
+            
+        },
+        
+        drawBettingArea: function(betAmount){
+            if(this.bettingPaper)
+                this.clearPaper(this.bettingPaper);
+            
+            this.bettingPaper = Raphael(this.screenWidth * 0.05,this.screenHeight*0.6,this.screenWidth * 0.3, this.screenHeight * 0.2);            
+        /*    this.bettingPaper.rect(3,3, this.screenWidth * 0.3 - 10, this.screenHeight * 0.2 - 10, 10).attr({
+               "stroke-width": 5,
+                stroke: "#fff",
+                "stroke-opacity": 0.85
+            });*/
+            
+            this.bettingPaper.text(0, this.screenHeight * 0.15, "Placed Bet: " + (betAmount || 0)).attr({
+                font: this.tSize*2 + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85,
+                "text-anchor": "start"
+            });
+            /*
+            if(betAmount){
+                this.bettingPaper.text(this.screenWidth * 0.25, this.screenHeight * 0.16, betAmount).attr({
+                    font: this.tSize + "px Arial, Helvetica, sans-serif",
+                    fill: "#fff",
+                    "fill-opacity": 0.5
+                });
+            }*/
+        },
+        
+        displayFunds: function(funds){
+            if(this.fundsPaper)
+                this.clearPaper(this.fundsPaper);
+            
+            if(!funds)
+                funds = app.root.findByName("Main").script.game.getFunds();
+            
+            this.fundsPaper = Raphael(this.screenWidth * 0.05, this.screenHeight * 0.05, this.screenWidth * 0.3, this.screenHeight * 0.2);
+            this.fundsPaper.text(0,this.screenHeight * 0.05,"Available Funds: " + funds).attr({
+                font: this.tSize*1.5 + "px Arial, Helvetica, sans-serif",
+                fill: "#fff",
+                "fill-opacity": 0.85,
+                "text-anchor": "start"
+            });
+        }
+    };
+
+    return Ui;
+});
