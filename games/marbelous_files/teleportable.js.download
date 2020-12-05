@@ -1,0 +1,94 @@
+pc.script.create('teleportable', function (app) {
+    var Teleportable = function (entity) {
+        this.entity = entity;
+    };
+    Teleportable.prototype = {
+        initialize: function () {
+            this.event = document.createEvent('Event');
+            this.event.initEvent("myEvent",true,true); 
+            this.eventmove = document.createEvent('Event');
+            this.eventmove.initEvent("myEvent",true,true); 
+            this.fall = true;
+            this.lastTeleportFrom = null;
+            this.lastTeleportTo = null;
+            this.lastTeleport = Date.now();
+            this.initPos = app.context.root.findByName('ballorig').getPosition();
+            this.startPosition = this.entity.getPosition().clone();
+            
+            // try to teleport to spawn target
+            var firstTarget = app.root.findByName(this.firstTeleportName);
+            if (firstTarget)
+                this.teleport(null, firstTarget);
+        },
+        Reset: function(){
+            this.fall = false;
+        },
+        unReset: function(){
+            this.fall = true;
+        },
+        update: function() {
+            var pos = this.entity.getPosition();
+            if(this.fall === true){
+                if (pos.y < 0){
+                    this.teleport(this.lastTeleportFrom, this.lastTeleportTo);
+                    app.context.root.findByName('soundeffects').audiosource.play('Plop');
+                    app.context.root.findByName('defaultCamera').script.Menu.decreaseLives();
+                    document.dispatchEvent(this.eventmove);
+                    document.dispatchEvent(this.event);
+                }
+            }
+            if(this.fall === false){
+                if (pos.y < 0){
+                    app.context.root.findByName('soundeffects').audiosource.play('Plop');
+                    this.teleport(this.lastTeleportFrom,app.context.root.findByName('ballorig'));
+                    app.context.root.findByName('defaultCamera').script.Menu.resetLives();
+                    app.context.root.findByName('Level31').script.king.resetMinions();
+                    document.dispatchEvent(this.eventmove);
+                    document.dispatchEvent(this.event);
+                }
+            }
+        },
+        
+        menu: function(){
+            document.dispatchEvent(this.event);
+            document.dispatchEvent(this.eventmove);
+            this.teleport(this.lastTeleportFrom,app.context.root.findByName('ballorig'));
+        },
+        
+        teleport: function(from, to) {
+            // can't teleport too often (500ms), or spawn teleport
+            if (from && (Date.now() - this.lastTeleport) < 500){
+                return;
+            }
+            // set new teleport time
+            this.lastTeleport = Date.now();
+            
+            // set last teleport targets
+            this.lastTeleportFrom = from;
+            this.lastTeleportTo = to;
+            
+            // position to teleport to
+            var position;
+            
+            if (to) {
+                // from target
+                position = to.getPosition();
+                // move a bit higher
+                position.y += .1;
+            } else {
+                // to respawn location
+                position = this.startPosition;
+            }
+            
+            // need to reset angular and linear forces
+            this.entity.rigidbody.linearVelocity = pc.Vec3.ZERO;
+            this.entity.rigidbody.angularVelocity = pc.Vec3.ZERO;
+            // move ball to that point
+            this.entity.setPosition(position);
+            // and sync physical body to new position
+            this.entity.rigidbody.syncEntityToBody();
+        }
+    };
+
+    return Teleportable;
+});

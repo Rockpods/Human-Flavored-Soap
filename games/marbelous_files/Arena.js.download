@@ -1,0 +1,36 @@
+pc.script.create('Arena', function (app) {
+    // Creates a new Arena instance
+    var Arena = function (entity) {
+        this.entity = entity;
+    };
+
+    Arena.prototype = {
+        // Called once after all resources are loaded and before the first update
+        initialize: function () {
+            this.plat1 = app.context.root.findByName('plat1');
+            this.plat2 = app.context.root.findByName('plat2');
+            this.plat3 = app.context.root.findByName('plat3');
+            this.plat4 = app.context.root.findByName('plat4');
+            this.ball = app.context.root.findByName('ball');
+            this.full = app.context.root.findByName('full');
+        },
+
+        // Called every frame, dt is time in seconds since last update
+        update: function (dt) {
+            this.ai = app.context.root.findByName('aiBoss').getPosition();
+            this.realAI = app.context.root.findByName('aiBoss');
+            if(this.ai.y <= 0){
+                app.context.root.findByName('defaultCamera').script.Menu.increaseScore();
+                this.entity.findByName('teleport-2').script.lowerplat.unelevate();
+                this.entity.findByName('teleport-3').script.lowerplat.unelevate();
+                this.entity.findByName('teleport-4').script.lowerplat.unelevate();
+                this.entity.findByName('teleport-5').script.lowerplat.unelevate();
+                this.realAI.collision.radius = 0.6;
+                app.context.root.findByName('aiBoss').setPosition(-5.6,7,-5.6);
+                app.context.root.findByName('aiBoss').rigidbody.syncEntityToBody();
+            }
+        }
+    };
+
+    return Arena;
+});
