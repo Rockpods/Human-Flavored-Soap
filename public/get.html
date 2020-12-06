@@ -7,13 +7,26 @@
 <link rel="stylesheet" href="w3.css">
 <style>
 body, html {height: 100%}
-body,h1,h2,h3,h4,h5,h6 {font-family: "courier", sans-serif}
+body,h1,h2,h3,h4,h5,h6 {font-family: "courier", sans-serif; color: lime}
 .menu {display: none}
 .bgimg {
   background-repeat: no-repeat;
   background-size: cover;
   background-image: url("images/bg.jpg");
   min-height: 90%;
+}
+  #frame {
+    border: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    z-index: 10;
+    background-color: #fff;
+    user-select: none;
 }
 </style>
 </head>
@@ -27,42 +40,31 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "courier", sans-serif}
 </div>
 <header class="bgimg w3-display-container w3-grayscale-min" id="home">
 <div class="w3-display-middle w3-center">
-<span class="w3-text-white w3-hide-small" style="font-size:350%">S<wbr>UR<wbr>F FREE<wbr>LY</span>
-<span class="w3-text-white w3-hide-large w3-hide-medium" style="font-size:200%"><b>S<wbr>UR<wbr>F FREE<wbr>LY</span>
-<br>
-<div class="w3-center">
-<p style="float: left;"><a href="all.html" class="w3-button w3-xlarge w3-purple w3-hover-green">Alloy</a></p>
-<p style="float: left;"><a href="kiddos.html" class="w3-button w3-xlarge w3-purple w3-hover-green">Node</a></p>
-<p style="float: left;"><a href="x3.html" class="w3-button w3-xlarge w3-purple w3-hover-green">PyDodge</a></p>
-<p onclick="myFunction()" style="float: left;"><a href="#" class="w3-button w3-xlarge w3-purple w3-hover-green">Aurora</a></p>
+<h1>Alloy</h1>
+<div>
+<form>
+<input class="w3-xmedium" id="url" type="text" name="url" inputmode="url" autocomplete="off"></input>
+<button class="w3-xmedium" style="float: right;" id="classicalloy">GO!</button>
+</form><br>
+<a href="/x3.html" class="previous">&laquo; PyDodge</a>
+<a href="/kiddos.html" class="next">Node &raquo;</a>
+<script src="../../assets/surf.js"></script>
 </div>
 </header>
 <script>
-// Tabbed Menu
-function openMenu(evt, menuName) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("menu");
-  for (i = 0; i < x.length; i++) {
-     x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < x.length; i++) {
-     tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
-  }
-  document.getElementById(menuName).style.display = "block";
-  evt.currentTarget.firstElementChild.className += " w3-red";
-}
-document.getElementById("myLink").click();
+$('classicalloy').onclick = function() {
+    var url = $('url').value;
+    var det = document.domain;
+    var domain = det.replace('www.', '').split(/[/?#]/)[0];
+    if (!url.startsWith('http') || !url.startsWith('https://')) {
+        url = url.split('/');
+        url = btoa('http://' + url[0] + '/' + url.slice(1).join('/'));
+        console.log(url);
+    } else url = btoa(url)
+    window.location.href = "https://" + "alloy." + "hopelessjourney." + "ga" + "/get/" + url;
+    document.cookie = 'oldsmobile=badcar; expires=' + (Date.now() + 259200) + '; SameSite=Lax; domain=.' + auth + '; path=/; Secure;';
+    return false;
+};
 </script>
-<script>
-function myFunction() {
-  alert("This proxy is either down, or not ready for release, contact Rockpods, or try again later.");
-}
-    </script>
-<script>
-function pyFunction() {
-  alert("PyDodge currently has no hosting to keep it up 24/7. If you'd like to pitch in, message me on Discord!");
-}
-    </script>
 </body>
 </html>
